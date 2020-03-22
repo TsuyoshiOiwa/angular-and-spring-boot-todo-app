@@ -1,0 +1,63 @@
+version: "3.7"
+services:
+  frontend:
+    build:
+      context: ./
+      dockerfile: docker/Dockerfile-node-dev
+      args:
+        workdir: /home/node/todo
+    volumes:
+      - /home/tarmtsuyoshi/git/udemy/angular-and-spring-boot-todo-app/frontend/todo:/home/node/todo
+    user: node
+    entrypoint: ["ng", "serve"]
+    ports:
+      - target: 4200
+        published: 4200
+        protocol: tcp
+        mode: host
+      - target: 9876
+        published: 9876
+        protocol: tcp
+        mode: host
+    networks:
+      - internal
+    environment:
+      - SELENIUM_HOST=selenium
+      - SELENIUM_PORT=4444
+      - E2E_TARGET_HOST=frontend
+      - E2E_TARGET_PORT=4200
+  selenium:
+    image: selenium/standalone-chrome-debug
+    networks:
+      - internal
+    ports:
+      - target: 4444
+        published: 4444
+        protocol: tcp
+        mode: host
+      - target: 15900
+        published: 15900
+        protocol: tcp
+        mode: host
+  server:
+    build:
+      context: ./
+      dockerfile: docker/Dockerfile-jdk-dev
+      args:
+        username: tarmtsuyoshi
+        workdir: /home/tarmtsuyoshi/todo
+    volumes:
+      - /home/tarmtsuyoshi/git/udemy/angular-and-spring-boot-todo-app/restful.web.services:/home/tarmtsuyoshi/todo
+    user: tarmtsuyoshi
+    entrypoint: ["./mvnw", "spring-boot:run"]
+    ports:
+      - target: 8080
+        published: 8080
+        protocol: tcp
+        mode: host
+    networks:
+      - internal
+networks:
+  internal:
+
+

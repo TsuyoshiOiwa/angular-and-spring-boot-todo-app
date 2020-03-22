@@ -1,0 +1,17 @@
+FROM node:12.16.1-alpine3.11
+
+RUN apk update && apk add tzdata; \
+    cp /usr/share/zoneinfo/Japan /etc/localtime; \
+    echo "Japan" > /etc/timezone; \
+    apk del tzdata;
+
+RUN apk update && apk add sudo bash;
+
+RUN npm install -g @angular/cli@9.0.7
+RUN apk update && apk add chromium
+
+ARG workdir
+
+USER node
+
+WORKDIR ${workdir}

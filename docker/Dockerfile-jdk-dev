@@ -1,0 +1,21 @@
+FROM adoptopenjdk:13.0.2_8-jdk-hotspot-bionic
+
+RUN apt update && apt install -y \
+    sudo; \
+    locale-gen ja_JP.UTF-8; \
+    /usr/sbin/update-locale LANG=ja_JP.UTF-8;
+
+ARG username=user
+ARG password=password
+ARG uid=1000
+ARG gid=1000
+ARG shell=/bin/bash
+ARG workdir
+
+RUN useradd -m -u ${uid} ${username}; \
+    gpasswd -a ${username} sudo; \
+    echo "${username}:${password}" | chpasswd;
+USER ${user}
+RUN echo ${password} | chsh -s ${shell}
+
+WORKDIR ${workdir}
